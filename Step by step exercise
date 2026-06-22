@@ -1,0 +1,178 @@
+Exercises
+
+Exercise 1: Create Users for the Finance Team
+
+Steps
+
+
+Sign in to the Microsoft Entra admin center.
+In the left menu, go to Identity > Users > All users.
+Click + New user > Create new user.
+Configure the first user:
+
+User principal name: priya.finance
+Display name: Priya Sharma
+Let Entra auto-generate a password (note it down).
+
+
+
+Click Review + create, then Create.
+Repeat the steps to create a second user raj.finance (Display name: Raj Mehta).
+
+
+Expected Output
+
+
+Two new users, Priya Sharma and Raj Mehta, appear in the All users list.
+
+
+Exercise 2: Organize Users into a Security Group
+
+Steps
+
+
+In the Entra admin center, go to Identity > Groups > All groups.
+Click + New group.
+Configure the group:
+
+Group type: Security
+Group name: Finance-Team
+Membership type: Assigned
+
+
+
+Under Members, add Priya Sharma and Raj Mehta.
+Click Create.
+
+
+Expected Output
+
+
+A security group Finance-Team is created with two members. Managing access by group instead of by individual user is a core least-privilege best practice.
+
+
+Exercise 3: Assign a Role Using RBAC (Least Privilege)
+
+Steps
+
+
+In the Azure Portal, open the Resource group (or subscription) that holds the finance resources.
+Select Access control (IAM) from the left menu.
+Click + Add > Add role assignment.
+Choose a least-privilege role — for example, Reader (view only) instead of Contributor or Owner.
+On the Members tab, select User, group, or service principal, then choose the Finance-Team group.
+Click Review + assign.
+
+
+Expected Output
+
+
+The Finance-Team group is assigned the Reader role, giving the team visibility without the ability to modify or delete resources.
+
+
+Exercise 4: Enforce Multi-Factor Authentication with a Conditional Access Policy
+
+
+Note: Conditional Access requires Entra ID P1/P2. If you do not have a license, skip to the fallback at the end of this exercise and enable Security Defaults, which enforces MFA for all users.
+
+
+
+Steps
+
+
+In the Entra admin center, go to Protection > Conditional Access > Policies.
+Click + New policy and name it Require MFA - Finance Team.
+Under Assignments > Users, include the Finance-Team group.
+Under Target resources, select All cloud apps.
+Under Access controls > Grant, select Grant access, then check Require multifactor authentication.
+Set Enable policy to On.
+Click Create.
+
+
+Fallback (no P1/P2 license):
+
+
+Go to Identity > Overview > Properties.
+Select Manage security defaults.
+Set Security defaults to Enabled and save.
+
+
+Expected Output
+
+
+Finance team members are prompted to register and use MFA the next time they sign in. The policy appears as On in the Conditional Access policy list.
+
+
+Exercise 5: Block Sign-ins from Outside Your Country (Named Locations)
+
+Steps
+
+
+In the Entra admin center, go to Protection > Conditional Access > Named locations.
+Click + Countries location, name it Allowed-Country, and select your country (e.g., India). Save.
+Go back to Policies and click + New policy named Block Foreign Sign-ins - Finance.
+Under Assignments > Users, include the Finance-Team group.
+Under Conditions > Locations, include Any location and exclude Allowed-Country.
+Under Access controls > Grant, select Block access.
+Set Enable policy to On and click Create.
+
+
+
+Safety tip: Always exclude at least one break-glass / emergency admin account from blocking policies so you never lock yourself out of the tenant.
+
+
+
+Expected Output
+
+
+Any sign-in attempt by a finance team member from outside the allowed country is blocked, while sign-ins from inside the country succeed.
+
+
+Exercise 6: Review Sign-in Logs for Monitoring
+
+Steps
+
+
+In the Entra admin center, go to Identity > Monitoring & health > Sign-in logs.
+Filter the logs by the user priya.finance.
+Inspect the columns for Status (Success/Failure), Conditional Access (whether a policy was applied), Location, and MFA.
+Click any entry to view its detailed Activity Details, including the Conditional Access tab showing which policies fired.
+
+
+Expected Output
+
+
+You can see sign-in events confirming that MFA was required and the location-based policy was evaluated, proving your controls are working.
+
+
+Exercise 7 (Optional): Create a User Using the Azure CLI
+
+Steps
+
+
+Open your terminal.
+Sign in to Azure:
+
+
+bashaz login
+
+
+Create a new user in your tenant (replace <your-tenant-domain> with your .onmicrosoft.com domain):
+
+
+bashaz ad user create \
+  --display-name "Anita Verma" \
+  --user-principal-name "anita.finance@<your-tenant-domain>.onmicrosoft.com" \
+  --password "StrongP@ssw0rd!" \
+  --force-change-password-next-sign-in true
+
+
+Verify the user was created:
+
+
+bashaz ad user list --filter "displayName eq 'Anita Verma'" --output table
+
+Expected Output
+
+
+A new user Anita Verma is created in Entra ID via the command line and is required to change the password on first sign-in.
