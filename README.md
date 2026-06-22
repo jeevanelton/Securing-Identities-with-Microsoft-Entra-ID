@@ -15,7 +15,7 @@ In this project, I will play the role of that engineer and secure the identities
 
 Introduction
 
-In this project, I'll learn how to secure identities using Microsoft Entra ID on Microsoft Azure. Identity is the new security perimeter in the cloud — if an attacker steals a valid identity, network firewalls won't stop them. We'll cover creating users and groups, assigning roles using Role-Based Access Control (RBAC), enforcing Multi-Factor Authentication, building a Conditional Access policy, and reviewing sign-in logs for monitoring.
+In this project, I'll learn how to secure identities using Microsoft Entra ID on Microsoft Azure. Identity is the new security perimeter in the cloud, if an attacker steals a valid identity, network firewalls won't stop them. We'll cover creating users and groups, assigning roles using Role-Based Access Control (RBAC), enforcing Multi-Factor Authentication, building a Conditional Access policy, and reviewing sign-in logs for monitoring.
 
 Pre-requisites
 
