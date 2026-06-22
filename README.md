@@ -1,151 +1,156 @@
-# 🔐 Microsoft Azure Basics: Securing Identities with Microsoft Entra ID
+# 🔐 Microsoft Entra ID Identity Security Lab
 
-![Azure](https://img.shields.io/badge/Microsoft-Azure-blue)
-![Security](https://img.shields.io/badge/Cloud-Security-green)
-![Identity](https://img.shields.io/badge/Identity-Microsoft%20Entra%20ID-purple)
+## Exercises: Securing Finance Team Identities in Azure
 
-## 📌 Project Overview
+This lab demonstrates how a Cloud Security Engineer can onboard a new department into Microsoft Entra ID and apply identity security controls based on:
 
-This project simulates the role of a **Junior Cloud Security Engineer** at **Contoso Ltd.**, where the organization is migrating its workforce to the cloud using **Microsoft Entra ID (formerly Azure Active Directory)** as the identity provider.
-
-The goal of this lab is to implement identity security best practices by:
-
-- Creating and managing user identities
-- Organizing users into security groups
-- Applying least privilege access using RBAC
-- Enforcing Multi-Factor Authentication (MFA)
-- Blocking risky sign-ins using Conditional Access
-- Monitoring authentication activity through sign-in logs
-
-> **Security Principle:**  
-> Identity is the new security perimeter in cloud environments. If an attacker compromises a valid identity, traditional network security controls may not prevent unauthorized access.
+- Least Privilege Access
+- Role-Based Access Control (RBAC)
+- Multi-Factor Authentication (MFA)
+- Conditional Access
+- Sign-in Monitoring
 
 ---
 
-# 🎯 Scenario
+# Exercise 1: Create Users for the Finance Team
 
-Contoso Ltd. is onboarding a new **Finance Team**.
+## 🎯 Objective
 
-The security requirement from management:
-
-> "Create finance user accounts, organize them into a group, provide only required access, enforce MFA, block risky external sign-ins, and verify activity through monitoring."
+Create user identities for new Finance department employees in Microsoft Entra ID.
 
 ---
 
-# 🏗️ Architecture Overview
+## Steps
+
+### 1. Open Microsoft Entra Admin Center
+
+Navigate:
 
 ```
-                 Users
-                   |
-                   |
-          +----------------+
-          | Finance Group  |
-          +----------------+
-                   |
-                   |
-          Microsoft Entra ID
-                   |
-     +-------------+-------------+
-     |                           |
- Conditional Access        RBAC Permissions
-     |                           |
-     |                           |
- MFA Enforcement          Least Privilege Access
-     |
- Sign-in Risk Protection
-
+Identity
+   |
+Users
+   |
+All users
 ```
 
 ---
 
-# 🛠️ Lab Environment
+### 2. Create First User
 
-## Requirements
-
-Before starting, ensure:
-
-- Microsoft Azure Account
-- Microsoft Entra ID Tenant
-- Global Administrator / Security Administrator permissions
-- Microsoft Entra ID P1/P2 license for Conditional Access
-
-Alternative:
-
-- Enable Security Defaults if Conditional Access is unavailable
-
----
-
-# 🔧 Tools Used
-
-| Tool | Purpose |
-|---|---|
-| Azure Portal | Cloud resource management |
-| Microsoft Entra Admin Center | Identity management |
-| Azure CLI | Command-line administration |
-| Microsoft Entra ID | Identity and access management |
-
----
-
-# 🚀 Implementation Steps
-
----
-
-# Exercise 1: Create Finance User Accounts
-
-## Objective
-
-Create new employee identities for the Finance department.
-
-### Steps
-
-1. Open Azure Portal
-
-2. Navigate:
+Click:
 
 ```
-Microsoft Entra ID
++ New user
+      |
+Create new user
+```
+
+Configure:
+
+```
+User principal name:
+priya.finance
+
+Display name:
+Priya Sharma
+```
+
+Allow Entra ID to generate a password.
+
+Save the generated password securely.
+
+Click:
+
+```
+Review + create
         |
-        Users
-        |
-        New User
+Create
 ```
 
-3. Create users:
+---
+
+### 3. Create Second User
+
+Repeat the same process:
+
+```
+User principal name:
+raj.finance
+
+Display name:
+Raj Mehta
+```
+
+---
+
+## Expected Output
+
+The Entra ID user list should contain:
+
+```
+Priya Sharma
+Raj Mehta
+```
 
 Example:
 
 ```
-finance.user1@contoso.com
-finance.user2@contoso.com
-finance.manager@contoso.com
+Users
+ |
+ +-- Priya Sharma
+ |
+ +-- Raj Mehta
+
 ```
-
-4. Configure:
-
-- Display Name
-- Username
-- Password
-- Department = Finance
 
 ---
 
 # Exercise 2: Create Finance Security Group
 
-## Objective
+## 🎯 Objective
 
-Organize finance users into a single security boundary.
+Organize users into a security group to simplify access management.
+
+Instead of assigning permissions individually:
+
+```
+User 1  ---> Permission
+User 2  ---> Permission
+User 3  ---> Permission
+```
+
+Use:
+
+```
+Finance-Team Group
+          |
+          |
+     Permissions
+
+```
+
+---
+
+## Steps
 
 Navigate:
 
 ```
-Microsoft Entra ID
-        |
-        Groups
-        |
-        New Group
+Identity
+
+Groups
+
+All groups
 ```
 
-Configuration:
+Select:
+
+```
++ New Group
+```
+
+Configure:
 
 ```
 Group Type:
@@ -158,203 +163,508 @@ Membership Type:
 Assigned
 ```
 
-Add:
+---
+
+Add members:
 
 ```
-finance.user1
-finance.user2
-finance.manager
+Priya Sharma
+
+Raj Mehta
+```
+
+Click:
+
+```
+Create
 ```
 
 ---
 
-# Exercise 3: Implement Least Privilege Access (RBAC)
+## Expected Output
 
-## Objective
+Security group created:
 
-Provide only required permissions.
+```
+Finance-Team
+
+Members:
+
+- Priya Sharma
+- Raj Mehta
+
+```
+
+---
+
+# Exercise 3: Assign RBAC Role (Least Privilege)
+
+## 🎯 Objective
+
+Provide Finance users only the access required.
 
 Azure RBAC follows:
 
 ```
 Who?
  |
-User / Group
+Finance-Team Group
 
 What?
  |
-Role
+Reader Role
 
 Where?
  |
-Resource Scope
-```
-
-Example:
-
-Finance users require storage access:
-
-Assign:
+Azure Resource
 
 ```
-Role:
-Storage Blob Data Reader
-
-Scope:
-Finance Storage Account
-```
-
-Avoid:
-
-```
-Owner
-Global Administrator
-Contributor
-```
-
-unless required.
 
 ---
 
-# Exercise 4: Enable Multi-Factor Authentication (MFA)
+## Steps
 
-## Objective
+Open:
 
-Protect identities even if passwords are compromised.
+```
+Azure Portal
 
-## Option 1: Conditional Access MFA
+Resource Group
+
+Access Control (IAM)
+
+```
+
+Select:
+
+```
++ Add
+
+Add role assignment
+```
+
+---
+
+Choose role:
+
+```
+Reader
+```
+
+Avoid excessive permissions:
+
+❌ Owner  
+❌ Contributor  
+❌ Administrator  
+
+---
+
+Members:
+
+Select:
+
+```
+User, group, or service principal
+```
+
+Choose:
+
+```
+Finance-Team
+```
+
+Click:
+
+```
+Review + assign
+```
+
+---
+
+## Expected Output
+
+Finance-Team receives:
+
+```
+Role:
+Reader
+
+Permission:
+
+✔ View resources
+✖ Modify resources
+✖ Delete resources
+
+```
+
+---
+
+# Exercise 4: Enable MFA with Conditional Access
+
+## 🎯 Objective
+
+Protect Finance accounts by requiring Multi-Factor Authentication.
+
+---
+
+## Requirement
+
+Conditional Access requires:
+
+```
+Microsoft Entra ID P1/P2 License
+```
+
+If unavailable:
+
+Use Security Defaults.
+
+---
+
+# Conditional Access Setup
 
 Navigate:
 
 ```
-Microsoft Entra ID
+Microsoft Entra Admin Center
 
-Security
+Protection
 
 Conditional Access
 
-Create Policy
+Policies
 ```
 
-Policy:
+Create:
 
 ```
++ New Policy
+```
+
 Name:
-Require MFA for Finance Users
 
-Users:
-Finance-Team
-
-Cloud Apps:
-All Applications
-
-Grant:
-Require Multi-Factor Authentication
-
-Enable:
-On
+```
+Require MFA - Finance Team
 ```
 
 ---
 
-## Option 2: Security Defaults
+## Assign Users
 
-If Conditional Access is unavailable:
+Include:
+
+```
+Finance-Team
+```
+
+---
+
+## Target Resources
+
+Select:
+
+```
+All cloud apps
+```
+
+---
+
+## Access Control
+
+Grant:
+
+```
+Require multifactor authentication
+```
+
+---
 
 Enable:
 
 ```
-Microsoft Entra ID
+Policy State:
+
+ON
+```
+
+Create policy.
+
+---
+
+## Expected Output
+
+Finance users must complete MFA registration.
+
+Login flow:
+
+```
+Username
+    |
+Password
+    |
+MFA Verification
+    |
+Access Granted
+
+```
+
+---
+
+# Fallback: Enable Security Defaults
+
+If Conditional Access is unavailable:
+
+Navigate:
+
+```
+Identity
+
+Overview
 
 Properties
 
 Manage Security Defaults
 
-Enable
 ```
 
-This automatically requires MFA registration.
+Set:
+
+```
+Enabled
+```
+
+Save.
 
 ---
 
-# Exercise 5: Block Risky Sign-ins Outside Country
+# Exercise 5: Block Foreign Sign-ins Using Named Locations
 
-## Objective
+## 🎯 Objective
 
-Prevent suspicious authentication attempts.
+Prevent Finance users from signing in from unauthorized countries.
 
-Create Conditional Access Policy:
+Example:
+
+Allow:
+
+```
+New Zealand
+```
+
+Block:
+
+```
+Other Countries
+```
+
+---
+
+# Step 1: Create Named Location
+
+Navigate:
+
+```
+Protection
+
+Conditional Access
+
+Named Locations
+```
+
+Select:
+
+```
++ Countries location
+```
+
+Create:
 
 ```
 Name:
-Block Risky Foreign Sign-ins
+
+Allowed-Country
+
+Country:
+
+Your Country
+
 ```
 
-Users:
+Save.
+
+---
+
+# Step 2: Create Blocking Policy
+
+Navigate:
+
+```
+Conditional Access
+
+Policies
+
++ New Policy
+```
+
+Name:
+
+```
+Block Foreign Sign-ins - Finance
+```
+
+---
+
+## Assign Users
+
+Include:
 
 ```
 Finance-Team
 ```
 
+---
+
+## Conditions
+
 Locations:
 
-Example:
+Include:
 
 ```
-Trusted Location:
-New Zealand
+Any location
 ```
 
-Condition:
+Exclude:
 
 ```
-Countries outside NZ
+Allowed-Country
 ```
 
-Access:
+---
+
+## Access Control
+
+Select:
 
 ```
-Block Access
+Block access
 ```
 
 Enable:
 
 ```
-On
+ON
+```
+
+Create.
+
+---
+
+## ⚠️ Security Recommendation
+
+Always exclude an emergency admin account:
+
+Example:
+
+```
+breakglass-admin
+```
+
+Otherwise you may lock yourself out.
+
+---
+
+## Expected Output
+
+Authentication result:
+
+Inside allowed country:
+
+```
+Login
+ |
+Allowed
+```
+
+Outside allowed country:
+
+```
+Login Attempt
+
+     |
+Conditional Access
+
+     |
+Blocked
+
 ```
 
 ---
 
-# Exercise 6: Monitor Sign-in Activity
+# Exercise 6: Review Sign-in Logs
 
-## Objective
+## 🎯 Objective
 
-Verify security controls are working.
+Verify security policies are working.
+
+---
+
+## Steps
 
 Navigate:
 
 ```
-Microsoft Entra ID
+Identity
 
-Monitoring
+Monitoring & health
 
-Sign-in Logs
+Sign-in logs
+
 ```
+
+Filter:
+
+```
+User:
+
+priya.finance
+```
+
+---
 
 Review:
 
-- User login attempts
-- Location
-- IP Address
-- MFA status
-- Risk detection
-- Authentication method
+| Field | Purpose |
+|-|-|
+| Status | Success / Failure |
+| Location | Login country |
+| MFA | Authentication result |
+| Conditional Access | Applied policies |
+
+---
+
+Open a login event:
+
+View:
+
+```
+Activity Details
+
+        |
+
+Conditional Access
+
+```
+
+---
+
+## Expected Output
 
 Example:
 
 ```
 User:
-finance.user1
+priya.finance
 
 Status:
 Success
@@ -362,100 +672,103 @@ Success
 MFA:
 Passed
 
-Location:
-New Zealand
-```
+Conditional Access:
+Require MFA - Finance Team
 
-Risk example:
+Location Policy:
+Evaluated
 
-```
-User:
-finance.user2
-
-Location:
-Unknown Country
-
-Result:
-Blocked
 ```
 
 ---
 
-# 🔍 Security Validation Checklist
+# Exercise 7: Create User Using Azure CLI
 
-| Security Control | Status |
+## 🎯 Objective
+
+Create Entra ID users through automation.
+
+---
+
+## Login to Azure
+
+```bash
+az login
+```
+
+---
+
+## Create User
+
+Replace:
+
+```
+<your-tenant-domain>
+```
+
+with your Azure tenant domain.
+
+```bash
+az ad user create \
+--display-name "Anita Verma" \
+--user-principal-name "anita.finance@<your-tenant-domain>.onmicrosoft.com" \
+--password "StrongP@ssw0rd!" \
+--force-change-password-next-sign-in true
+```
+
+---
+
+## Verify User Creation
+
+```bash
+az ad user list \
+--filter "displayName eq 'Anita Verma'" \
+--output table
+```
+
+---
+
+## Expected Output
+
+Example:
+
+```
+DisplayName
+------------
+Anita Verma
+
+AccountEnabled
+--------------
+True
+
+```
+
+User is created successfully and must change password during first login.
+
+---
+
+# ✅ Lab Completion Checklist
+
+| Task | Completed |
 |-|-|
-| Finance users created | ✅ |
-| Finance group created | ✅ |
-| RBAC least privilege applied | ✅ |
-| MFA enabled | ✅ |
-| Conditional Access configured | ✅ |
-| Risky sign-ins blocked | ✅ |
-| Sign-in logs reviewed | ✅ |
+| Created Finance users | ✅ |
+| Created Finance security group | ✅ |
+| Applied RBAC least privilege | ✅ |
+| Enabled MFA | ✅ |
+| Configured Conditional Access | ✅ |
+| Blocked foreign sign-ins | ✅ |
+| Verified sign-in logs | ✅ |
+| Created user using Azure CLI | ✅ |
 
 ---
 
-# 🧠 Key Security Concepts Learned
-
-## Identity Security
-
-Modern cloud security focuses on:
-
-```
-Verify Identity
-       +
-Limit Access
-       +
-Monitor Activity
-```
-
----
-
-## Least Privilege
-
-Users receive:
-
-```
-Minimum permissions
-+
-Only required resources
-+
-Limited duration
-```
-
----
-
-## Zero Trust Approach
-
-Implemented principles:
-
-```
-Never Trust
-Always Verify
-
-Verify:
-- Identity
-- Location
-- Device
-- Risk
-```
-
----
-
-# 📚 Skills Demonstrated
+# Skills Demonstrated
 
 - Microsoft Entra ID Administration
 - Azure Identity Security
-- RBAC Implementation
-- Conditional Access Policies
-- MFA Enforcement
+- RBAC
+- Conditional Access
+- MFA Implementation
+- Zero Trust Security
 - Cloud Security Monitoring
-- Zero Trust Security Model
-
----
-
-# 👨‍💻 Author
-
-**Jeevan Elton**
-
-Cloud Security | Network Security | Cybersecurity
+- Azure CLI Automation
